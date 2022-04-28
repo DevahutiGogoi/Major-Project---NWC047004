@@ -1,5 +1,8 @@
 import re
 import pandas as pd
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+sia=SentimentIntensityAnalyzer()
 
 def preprocess(data):
     pattern = '\d{1,2}/\d{1,2}/\d{2,4},\s\d{1,2}:\d{2}\s-\s'
@@ -36,6 +39,10 @@ def preprocess(data):
     df['day_name'] = df['date'].dt.day_name()
     df['hour'] = df['date'].dt.hour
     df['minute'] = df['date'].dt.minute
+    df["positive"] = [sia.polarity_scores(i)["pos"] for i in df["message"]]
+    df["negative"] = [sia.polarity_scores(i)["neg"] for i in df["message"]]
+    df["neutral"] = [sia.polarity_scores(i)["neu"] for i in df["message"]]
+    df['Prediction'] = df['message'].apply(lambda x: 1 if sia.polarity_scores(x)['compound'] >= 0 else -1)
 
     period = []
     for hour in df[['day_name', 'hour']]['hour']:
