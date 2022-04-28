@@ -1,0 +1,9 @@
+streamlit~=1.5.0
+matplotlib~=3.5.1
+seaborn~=0.11.2
+urlextract~=1.5.0
+wordcloud~=1.8.1
+pandas~=1.1.5
+emoji~=1.6.3
+django-emoji~=2.2.2
+nltk~=3.7
