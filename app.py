@@ -17,14 +17,14 @@ if uploaded_file is not None:
     user_list.sort()
     user_list.insert(0, "Overall")
 
-    selected_user = st.sidebar.selectbox("Show analysis wrt", user_list)
+    selected_user = st.sidebar.selectbox("Show analysis wrt",user_list)
 
     if st.sidebar.button("Show Analysis"):
 
         # Stats Area
         num_messages, words, num_media_messages, num_links = helper.fetch_stats(selected_user,df)
         st.title("Top Statistics")
-        col1, col2, col3, col4 = st.beta_columns(4)
+        col1, col2, col3, col4 = st.columns(4)
 
         with col1:
             st.header("Total Messages")
@@ -41,9 +41,9 @@ if uploaded_file is not None:
 
         # monthly timeline
         st.title("Monthly Timeline")
-        timeline = helper.monthly_timeline(selected_user, df)
+        timeline = helper.monthly_timeline(selected_user,df)
         fig,ax = plt.subplots()
-        ax.plot(timeline['time'], timeline['message'], color='green')
+        ax.plot(timeline['time'], timeline['message'],color='green')
         plt.xticks(rotation='vertical')
         st.pyplot(fig)
 
@@ -57,13 +57,13 @@ if uploaded_file is not None:
 
         # activity map
         st.title('Activity Map')
-        col1, col2 = st.beta_columns(2)
+        col1,col2 = st.columns(2)
 
         with col1:
             st.header("Most busy day")
-            busy_day = helper.week_activity_map(selected_user, df)
+            busy_day = helper.week_activity_map(selected_user,df)
             fig,ax = plt.subplots()
-            ax.bar(busy_day.index, busy_day.values, color='purple')
+            ax.bar(busy_day.index,busy_day.values,color='purple')
             plt.xticks(rotation='vertical')
             st.pyplot(fig)
 
@@ -76,8 +76,8 @@ if uploaded_file is not None:
             st.pyplot(fig)
 
         st.title("Weekly Activity Map")
-        user_heatmap = helper.activity_heatmap(selected_user, df)
-        fig, ax = plt.subplots()
+        user_heatmap = helper.activity_heatmap(selected_user,df)
+        fig,ax = plt.subplots()
         ax = sns.heatmap(user_heatmap)
         st.pyplot(fig)
 
@@ -87,7 +87,7 @@ if uploaded_file is not None:
             x,new_df = helper.most_busy_users(df)
             fig, ax = plt.subplots()
 
-            col1, col2 = st.beta_columns(2)
+            col1, col2 = st.columns(2)
 
             with col1:
                 ax.bar(x.index, x.values,color='red')
@@ -101,6 +101,19 @@ if uploaded_file is not None:
         df_wc = helper.create_wordcloud(selected_user,df)
         fig,ax = plt.subplots()
         ax.imshow(df_wc)
+        st.pyplot(fig)
+
+        # sentiment analysis
+        st.title("Sentiment Analysis")
+        df = helper.sentiment_analysis(selected_user, df)
+        pos = df.apply(lambda x: True if x['positive'] > 0 else False, axis=1)
+        num_pos = len(pos[pos == True].index)
+
+        neg = df.apply(lambda x: True if x['negative'] > 0 else False, axis=1)
+        num_neg = len(neg[neg == True].index)
+
+        fig, ax = plt.subplots()
+        ax.bar(["positive", "negative"], [num_pos, num_neg])
         st.pyplot(fig)
 
         # most common words
@@ -118,7 +131,7 @@ if uploaded_file is not None:
         emoji_df = helper.emoji_helper(selected_user,df)
         st.title("Emoji Analysis")
 
-        col1,col2 = st.beta_columns(2)
+        col1,col2 = st.columns(2)
 
         with col1:
             st.dataframe(emoji_df)
@@ -126,14 +139,4 @@ if uploaded_file is not None:
             fig,ax = plt.subplots()
             ax.pie(emoji_df[1].head(),labels=emoji_df[0].head(),autopct="%0.2f")
             st.pyplot(fig)
-
-
-
-
-
-
-
-
-
-
 
